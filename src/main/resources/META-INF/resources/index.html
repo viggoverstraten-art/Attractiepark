@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rule-Engine Attractiepark — Toegangscontrole</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --blauw: #0f3460;
+            --oranje: #e94560;
+            --licht: #f5f7fa;
+            --groen: #16a34a;
+            --rood: #dc2626;
+            --grijs: #64748b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--licht);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: var(--blauw);
+            color: white;
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+        }
+
+        .logo-blok {
+            width: 40px;
+            height: 40px;
+            background: var(--oranje);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            flex-shrink: 0;
+        }
+
+        header .titel h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        header .titel p {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 1px;
+        }
+
+        nav {
+            margin-left: auto;
+            display: flex;
+            gap: 4px;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 6px;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .nav-link:hover { background: rgba(255,255,255,0.1); color: white; }
+        .nav-link.actief { background: rgba(255,255,255,0.15); color: white; }
+
+        header .badge {
+            margin-left: 16px;
+            background: var(--oranje);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 32px 16px;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .kaart {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .kaart-header {
+            background: var(--blauw);
+            color: white;
+            padding: 16px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .formulier-kaart { width: 100%; max-width: 440px; }
+        .formulier-body { padding: 24px; }
+
+        .veld { margin-bottom: 20px; }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--grijs);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            color: #1e293b;
+            background: white;
+            outline: none;
+            transition: border-color 0.15s;
+            appearance: none;
+        }
+
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='%2364748b' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            cursor: pointer;
+        }
+
+        select:focus, input[type="number"]:focus { border-color: var(--blauw); }
+
+        .invoer-rij { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+        .invoer-wrapper { position: relative; }
+        .invoer-wrapper input { padding-right: 44px; }
+
+        .eenheid {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 13px;
+            color: var(--grijs);
+            pointer-events: none;
+        }
+
+        .vereisten-banner {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #1d4ed8;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .vereisten-banner.zichtbaar { display: flex; }
+
+        .vereisten-label { font-weight: 600; }
+
+        .vereisten-pill {
+            background: #dbeafe;
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .controleer-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--blauw);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 0.3px;
+            transition: background 0.15s, transform 0.1s;
+        }
+
+        .controleer-btn:hover { background: #0a2540; }
+        .controleer-btn:active { transform: scale(0.98); }
+        .controleer-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+        .reset-btn {
+            width: 100%;
+            padding: 12px;
+            background: white;
+            color: var(--grijs);
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: border-color 0.15s, color 0.15s;
+        }
+
+        .reset-btn:hover { border-color: var(--blauw); color: var(--blauw); }
+
+        .resultaat {
+            margin-top: 20px;
+            border-radius: 12px;
+            padding: 20px 20px 16px;
+            display: none;
+            animation: inFade 0.2s ease;
+        }
+
+        @keyframes inFade {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .resultaat.toegestaan {
+            background: #f0fdf4;
+            border: 2px solid #86efac;
+        }
+
+        .resultaat.geweigerd {
+            background: #fef2f2;
+            border: 2px solid #fca5a5;
+        }
+
+        .resultaat-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .toegestaan .resultaat-indicator { background: var(--groen); }
+        .geweigerd  .resultaat-indicator { background: var(--rood); }
+
+        .resultaat-tekst {
+            font-size: 17px;
+            font-weight: 700;
+            vertical-align: middle;
+        }
+
+        .toegestaan .resultaat-tekst { color: var(--groen); }
+        .geweigerd  .resultaat-tekst { color: var(--rood); }
+
+        .resultaat-sub {
+            font-size: 13px;
+            color: var(--grijs);
+            margin-top: 6px;
+            padding-left: 18px;
+        }
+
+        /* Overzichtkaart */
+        .overzicht-kaart { width: 100%; max-width: 360px; }
+
+        .attractie-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 24px;
+            border-bottom: 1px solid #f1f5f9;
+            gap: 14px;
+            transition: background 0.1s;
+        }
+
+        .attractie-item:last-child { border-bottom: none; }
+        .attractie-item:hover { background: #f8fafc; }
+        .attractie-item.actief { background: #eff6ff; border-left: 3px solid var(--blauw); }
+
+        .attractie-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--blauw);
+            flex-shrink: 0;
+        }
+
+        .attractie-naam {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .attractie-vereisten {
+            font-size: 12px;
+            color: var(--grijs);
+            margin-top: 2px;
+        }
+
+        .checkbox-veld label.checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 400;
+            color: #1e293b;
+            text-transform: none;
+            letter-spacing: 0;
+            cursor: pointer;
+            padding: 10px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            transition: border-color 0.15s, background 0.15s;
+        }
+
+        .checkbox-veld label.checkbox-label:hover {
+            border-color: var(--blauw);
+            background: #f8fafc;
+        }
+
+        .checkbox-veld input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--blauw);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .laden { padding: 24px; text-align: center; color: var(--grijs); font-size: 14px; }
+
+        footer {
+            text-align: center;
+            padding: 16px;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="titel">
+            <h1>Rule-Engine Attractiepark</h1>
+            <p>Medewerker toegangscontrole</p>
+        </div>
+        <nav>
+            <a href="/" class="nav-link actief">Toegangscontrole</a>
+            <a href="/regels.html" class="nav-link">Regelbeheer</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="kaart formulier-kaart">
+            <div class="kaart-header">Toegang controleren</div>
+            <div class="formulier-body">
+
+                <div class="veld">
+                    <label>Attractie</label>
+                    <select id="attractie" onchange="attractieGewijzigd()">
+                        <option value="">Kies een attractie...</option>
+                    </select>
+                </div>
+
+                <div class="vereisten-banner" id="vereisten">
+                    <span class="vereisten-label">Vereisten:</span>
+                    <span class="vereisten-pill" id="vereiste-leeftijd"></span>
+                    <span class="vereisten-pill" id="vereiste-lengte"></span>
+                </div>
+
+                <div class="invoer-rij">
+                    <div class="veld">
+                        <label>Leeftijd</label>
+                        <div class="invoer-wrapper">
+                            <input type="number" id="leeftijd" min="0" max="120" placeholder="0">
+                            <span class="eenheid">jaar</span>
+                        </div>
+                    </div>
+                    <div class="veld">
+                        <label>Lengte</label>
+                        <div class="invoer-wrapper">
+                            <input type="number" id="lengte" min="0" max="250" placeholder="0">
+                            <span class="eenheid">cm</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="veld checkbox-veld" id="veld-zwanger" style="display:none">
+                    <label>Zwangerschap</label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="zwanger">
+                        Bezoeker is zwanger
+                    </label>
+                </div>
+
+                <div class="veld checkbox-veld" id="veld-begeleiding" style="display:none">
+                    <label>Begeleiding</label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="begeleiding">
+                        Bezoeker heeft begeleiding van een volwassene
+                    </label>
+                </div>
+
+                <button class="controleer-btn" id="btn" onclick="controleer()">
+                    Controleer toegang
+                </button>
+
+                <div class="resultaat" id="resultaat">
+                    <div>
+                        <span class="resultaat-indicator" id="resultaat-indicator"></span>
+                        <span class="resultaat-tekst" id="resultaat-tekst"></span>
+                    </div>
+                    <div class="resultaat-sub" id="resultaat-sub"></div>
+                </div>
+
+                <button class="reset-btn" id="reset-btn" onclick="reset()" style="display:none">
+                    Nieuwe controle
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer>Toegangscontrole systeem &mdash; regels beheerd via Apache KIE / Drools 10</footer>
+
+    <script>
+        let attractieDetails = [];
+
+        async function laadDetails() {
+            try {
+                const res = await fetch('/attracties/details');
+                attractieDetails = await res.json();
+
+                const select = document.getElementById('attractie');
+                select.innerHTML = '<option value="">Kies een attractie...</option>' +
+                    attractieDetails.map(a =>
+                        `<option value="${a.naam}">${a.naam}</option>`
+                    ).join('');
+            } catch (e) {
+                console.error('Fout bij laden attracties:', e);
+                document.getElementById('attractie-lijst').innerHTML =
+                    '<div class="laden">Kon attracties niet laden</div>';
+            }
+        }
+
+        function attractieGewijzigd() {
+            const naam = document.getElementById('attractie').value;
+            const banner = document.getElementById('vereisten');
+
+            document.getElementById('resultaat').style.display = 'none';
+            document.getElementById('reset-btn').style.display = 'none';
+
+            if (naam) {
+                const item = document.getElementById('item-' + naam.replace(/ /g, '-'));
+                if (item) item.classList.add('actief');
+            }
+
+            const detail = attractieDetails.find(a => a.naam === naam);
+            if (detail) {
+                document.getElementById('vereiste-leeftijd').textContent = `Min. ${detail.minLeeftijd} jaar`;
+                document.getElementById('vereiste-lengte').textContent = `Min. ${detail.minLengte} cm`;
+                banner.classList.add('zichtbaar');
+            } else {
+                banner.classList.remove('zichtbaar');
+            }
+
+            // Toon/verberg extra velden op basis van attractievereisten
+            document.getElementById('veld-zwanger').style.display =
+                detail?.zwangerVerboden ? 'block' : 'none';
+            document.getElementById('veld-begeleiding').style.display =
+                detail?.begeleidingVereist ? 'block' : 'none';
+
+            // Reset checkboxes
+            document.getElementById('zwanger').checked = false;
+            document.getElementById('begeleiding').checked = false;
+        }
+
+        async function controleer() {
+            const attractie = document.getElementById('attractie').value;
+            const leeftijd = parseInt(document.getElementById('leeftijd').value);
+            const lengte = parseInt(document.getElementById('lengte').value);
+            const btn = document.getElementById('btn');
+            const resultaat = document.getElementById('resultaat');
+
+            if (!attractie) { alert('Kies een attractie.'); return; }
+            if (!leeftijd || leeftijd <= 0) { alert('Vul een geldige leeftijd in.'); return; }
+            if (!lengte || lengte <= 0) { alert('Vul een geldige lengte in.'); return; }
+
+            btn.disabled = true;
+            btn.textContent = 'Bezig...';
+            resultaat.style.display = 'none';
+
+            try {
+                const zwanger    = document.getElementById('zwanger').checked;
+                const begeleiding = document.getElementById('begeleiding').checked;
+
+                const res = await fetch('/toegang', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ attractie, leeftijd, lengte, zwanger, begeleiding })
+                });
+                if (!res.ok) {
+                    throw new Error(`Server fout: HTTP ${res.status}`);
+                }
+                const data = await res.json();
+                const toegestaan = data.beslissing === 'Toegang toegestaan';
+                const detail = attractieDetails.find(a => a.naam === attractie);
+
+                resultaat.className = 'resultaat ' + (toegestaan ? 'toegestaan' : 'geweigerd');
+                document.getElementById('resultaat-tekst').textContent = data.beslissing;
+
+                if (!toegestaan && detail) {
+                    const redenen = [];
+                    if (zwanger && detail.zwangerVerboden) redenen.push('zwangere bezoekers zijn niet toegestaan');
+                    if (!begeleiding && detail.begeleidingVereist) redenen.push('begeleiding van een volwassene vereist');
+                    if (leeftijd < detail.minLeeftijd) redenen.push(`minimaal ${detail.minLeeftijd} jaar vereist`);
+                    if (lengte < detail.minLengte) redenen.push(`minimaal ${detail.minLengte} cm vereist`);
+                    document.getElementById('resultaat-sub').textContent = redenen.join(' · ');
+                } else {
+                    document.getElementById('resultaat-sub').textContent = '';
+                }
+
+                resultaat.style.display = 'block';
+                document.getElementById('reset-btn').style.display = 'block';
+            } catch (e) {
+                console.error('Fout bij controleer:', e);
+                toonFout('Er is een fout opgetreden: ' + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Controleer toegang';
+            }
+        }
+
+        function reset() {
+            document.getElementById('attractie').value = '';
+            document.getElementById('leeftijd').value = '';
+            document.getElementById('lengte').value = '';
+            document.getElementById('zwanger').checked = false;
+            document.getElementById('begeleiding').checked = false;
+            document.getElementById('veld-zwanger').style.display = 'none';
+            document.getElementById('veld-begeleiding').style.display = 'none';
+            document.getElementById('vereisten').classList.remove('zichtbaar');
+            document.getElementById('resultaat').style.display = 'none';
+            document.getElementById('reset-btn').style.display = 'none';
+        }
+
+        function toonFout(bericht) {
+            const resultaat = document.getElementById('resultaat');
+            resultaat.className = 'resultaat geweigerd';
+            document.getElementById('resultaat-tekst').textContent = 'Verbinding mislukt';
+            document.getElementById('resultaat-sub').textContent = bericht;
+            resultaat.style.display = 'block';
+        }
+
+        document.addEventListener('keydown', e => { if (e.key === 'Enter') controleer(); });
+        laadDetails();
+    </script>
+</body>
+</html>

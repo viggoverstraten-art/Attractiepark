@@ -1,0 +1,28 @@
+services:
+  drools-workbench:
+    image: jboss/drools-workbench-showcase:latest
+    platform: linux/amd64
+    container_name: pretpark-drools-workbench
+    ports:
+      - "8180:8080"
+    volumes:
+      - drools-data:/opt/jboss/.niogit
+    mem_limit: 2g
+    restart: unless-stopped
+
+  kie-server:
+    image: jboss/kie-server-showcase:latest
+    platform: linux/amd64
+    container_name: pretpark-kie-server
+    ports:
+      - "8280:8080"
+    environment:
+      - KIE_SERVER_LOCATION=http://kie-server:8080/kie-server/services/rest/server
+      - KIE_SERVER_CONTROLLER=http://drools-workbench:8080/business-central/rest/controller
+    depends_on:
+      - drools-workbench
+    mem_limit: 1g
+    restart: unless-stopped
+
+volumes:
+  drools-data:

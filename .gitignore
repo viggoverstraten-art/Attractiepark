@@ -1,0 +1,10 @@
+target/
+.quarkus/
+*.class
+*.jar
+!**/src/main/**
+!**/src/test/**
+.idea/
+*.iml
+.DS_Store
+kie-project/

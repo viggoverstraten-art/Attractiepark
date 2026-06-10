@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:feel="https://www.omg.org/spec/DMN/20191111/FEEL/" xmlns:kie="https://kie.org/dmn/extensions/1.0" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" id="_toegangscontrole" name="Toegangscontrole" namespace="https://pretpark.nl/toegangscontrole">
+  <decision id="_toegangsbeslissing" name="Toegangsbeslissing">
+    <variable id="_result" name="Toegangsbeslissing" typeRef="string" />
+    <informationRequirement id="_ir0">
+      <requiredInput href="#_attractie" />
+    </informationRequirement>
+    <informationRequirement id="_ir1">
+      <requiredInput href="#_leeftijd" />
+    </informationRequirement>
+    <informationRequirement id="_ir2">
+      <requiredInput href="#_lengte" />
+    </informationRequirement>
+    <informationRequirement id="_ir3">
+      <requiredInput href="#_begeleiding" />
+    </informationRequirement>
+    <informationRequirement id="_A381CF37-266D-41EE-A8E4-0ADF29EEBC38">
+      <requiredInput href="#_3F8E2CF8-F7BB-4B9C-830E-9FADE4928AFD" />
+    </informationRequirement>
+    <decisionTable id="_dt" hitPolicy="FIRST" label="Toegangsbeslissing" typeRef="string">
+      <input id="_in_attractie" label="attractie">
+        <inputExpression id="_ie_attractie" typeRef="string">
+          <text>attractie</text>
+        </inputExpression>
+      </input>
+      <input id="_in_leeftijd" label="leeftijd">
+        <inputExpression id="_ie_leeftijd" typeRef="number">
+          <text>leeftijd</text>
+        </inputExpression>
+      </input>
+      <input id="_7DFB6553-6676-4E59-BA94-41F3A1C03136">
+        <inputExpression id="_5BF0FA48-502C-4EE3-A2F2-31C21CBB486E" typeRef="boolean">
+          <text>zwanger</text>
+        </inputExpression>
+      </input>
+      <input id="_in_lengte" label="lengte (cm)">
+        <inputExpression id="_ie_lengte" typeRef="number">
+          <text>lengte</text>
+        </inputExpression>
+      </input>
+      <input id="_in_begeleiding" label="begeleiding volwassene">
+        <inputExpression id="_ie_begeleiding" typeRef="boolean">
+          <text>begeleiding</text>
+        </inputExpression>
+      </input>
+      <output id="_output" label="Toegangsbeslissing" />
+      <rule id="_E204638F-85F6-4F8F-8666-C54E85123328">
+        <description>Achtbaan: voldoet aan alle vereisten</description>
+        <inputEntry id="_F9C38680-56DF-43C9-95A7-E2E0E2DB9CFA">
+          <text>&quot;Achtbaan&quot;</text>
+        </inputEntry>
+        <inputEntry id="_75A8A564-070D-4180-BD39-40C1F7B676C4">
+          <text>&gt;= 12</text>
+        </inputEntry>
+        <inputEntry id="_3FE188BB-4AC0-4C6B-A4D6-8EBF9CDDA2B1">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="_BCFB2EF6-61DF-4739-B8D1-1FA3C4FE1764">
+          <text>&gt;= 140</text>
+        </inputEntry>
+        <inputEntry id="_63D579EE-5C1D-405B-B241-9D8E3D03242A">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="_31F7A9CE-B7E3-44C5-A46E-0B248081D18C">
+          <text>&quot;Toegang toegestaan&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="_ab_ok">
+        <description>Achtbaan: geweigerd - zwangere bezoeker</description>
+        <inputEntry id="_ab_ok_1">
+          <text>&quot;Achtbaan&quot;</text>
+        </inputEntry>
+        <inputEntry id="_ab_ok_2">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_EB714D89-E91B-4270-9726-96391E45820E">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="_ab_ok_3">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_ab_ok_4">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="_ab_ok_o">
+          <text>&quot;Toegang geweigerd&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="_ab_nok">
+        <description>Achtbaan: voldoet niet</description>
+        <inputEntry id="_ab_nok_1">
+          <text>&quot;Achtbaan&quot;</text>
+        </inputEntry>
+        <inputEntry id="_ab_nok_2">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_64C49025-09C2-41D9-8355-2756FBBB8B51">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_ab_nok_3">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_ab_nok_4">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="_ab_nok_o">
+          <text>&quot;Toegang geweigerd&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="_ww_ok">
+        <description>Wildwaterbaan: voldoet</description>
+        <inputEntry id="_ww_ok_1">
+          <text>&quot;Wildwaterbaan&quot;</text>
+        </inputEntry>
+        <inputEntry id="_ww_ok_2">
+          <text>&gt;= 8</text>
+        </inputEntry>
+        <inputEntry id="_BD241247-0EA8-4168-8790-99062D700C33">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_ww_ok_3">
+          <text>&gt;= 120</text>
+        </inputEntry>
+        <inputEntry id="_ww_ok_4">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="_ww_ok_o">
+          <text>&quot;Toegang toegestaan&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="_ww_nok">
+        <description>Wildwaterbaan: voldoet niet</description>
+        <inputEntry id="_ww_nok_1">
+          <text>&quot;Wildwaterbaan&quot;</text>
+        </inputEntry>
+        <inputEntry id="_ww_nok_2">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_55711F65-B09D-4E01-9B4C-C8076BEAE3D7">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_ww_nok_3">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_ww_nok_4">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="_ww_nok_o">
+          <text>&quot;Toegang geweigerd&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="_vv_ok">
+        <description>Vrije val: voldoet aan alle vereisten</description>
+        <inputEntry id="_vv_ok_1">
+          <text>&quot;Vrije val&quot;</text>
+        </inputEntry>
+        <inputEntry id="_vv_ok_2">
+          <text>&gt;= 16</text>
+        </inputEntry>
+        <inputEntry id="_DDF3D0A0-CB37-4748-A600-D8ABFCD49770">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="_vv_ok_3">
+          <text>&gt;= 150</text>
+        </inputEntry>
+        <inputEntry id="_vv_ok_4">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="_vv_ok_o">
+          <text>&quot;Toegang toegestaan&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="_vv_zwanger">
+        <description>Vrije val: geweigerd - zwangere bezoeker</description>
+        <inputEntry id="_vv_zwanger_1">
+          <text>&quot;Vrije val&quot;</text>
+        </inputEntry>
+        <inputEntry id="_vv_zwanger_2">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_vv_zwanger_3">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="_vv_zwanger_4">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_vv_zwanger_5">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="_vv_zwanger_o">
+          <text>&quot;Toegang geweigerd&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="_vv_nok">
+        <description>Vrije val: voldoet niet</description>
+        <inputEntry id="_vv_nok_1">
+          <text>&quot;Vrije val&quot;</text>
+        </inputEntry>
+        <inputEntry id="_vv_nok_2">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_81EBFBC6-0DFA-4050-AB68-BF64679A8F92">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_vv_nok_3">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_vv_nok_4">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="_vv_nok_o">
+          <text>&quot;Toegang geweigerd&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="_ka_zelfstandig">
+        <description>Kinder Achtbaan: voldoet zelfstandig (8 jaar of ouder)</description>
+        <inputEntry id="_ka_zelfstandig_1">
+          <text>&quot;Kinder Achtbaan&quot;</text>
+        </inputEntry>
+        <inputEntry id="_ka_zelfstandig_2">
+          <text>&gt;= 8</text>
+        </inputEntry>
+        <inputEntry id="_ka_zelfstandig_3">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_ka_zelfstandig_4">
+          <text>&gt;= 100</text>
+        </inputEntry>
+        <inputEntry id="_ka_zelfstandig_5">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="_ka_zelfstandig_o">
+          <text>&quot;Toegang toegestaan&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="_ka_ok">
+        <description>Kinder Achtbaan: voldoet met begeleiding (4 t/m 7 jaar)</description>
+        <inputEntry id="_ka_ok_1">
+          <text>&quot;Kinder Achtbaan&quot;</text>
+        </inputEntry>
+        <inputEntry id="_ka_ok_2">
+          <text>&gt;= 4</text>
+        </inputEntry>
+        <inputEntry id="_ka_ok_3">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_ka_ok_4">
+          <text>&gt;= 100</text>
+        </inputEntry>
+        <inputEntry id="_ka_ok_5">
+          <text>true</text>
+        </inputEntry>
+        <outputEntry id="_ka_ok_o">
+          <text>&quot;Toegang toegestaan&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="_ka_nok">
+        <description>Kinder Achtbaan: voldoet niet</description>
+        <inputEntry id="_ka_nok_1">
+          <text>&quot;Kinder Achtbaan&quot;</text>
+        </inputEntry>
+        <inputEntry id="_ka_nok_2">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_ka_nok_3">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_ka_nok_4">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_ka_nok_5">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="_ka_nok_o">
+          <text>&quot;Toegang geweigerd&quot;</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <inputData id="_attractie" name="attractie">
+    <variable id="_attractie_var" name="attractie" typeRef="string" />
+  </inputData>
+  <inputData id="_leeftijd" name="leeftijd">
+    <variable id="_leeftijd_var" name="leeftijd" typeRef="number" />
+  </inputData>
+  <inputData id="_lengte" name="lengte">
+    <variable id="_lengte_var" name="lengte" typeRef="number" />
+  </inputData>
+  <inputData id="_begeleiding" name="begeleiding">
+    <variable id="_begeleiding_var" name="begeleiding" typeRef="boolean" />
+  </inputData>
+  <inputData name="zwanger" id="_3F8E2CF8-F7BB-4B9C-830E-9FADE4928AFD">
+    <description>Is de bezoeker zwanger?</description>
+    <variable name="zwanger" id="_52A14377-63FD-467E-84CD-8355C75E4DC6" typeRef="boolean" />
+  </inputData>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="_diagram" name="Toegangscontrole">
+      <di:extension>
+        <kie:ComponentsWidthsExtension>
+          <kie:ComponentWidths dmnElementRef="_dt">
+            <kie:width>150</kie:width>
+            <kie:width>150</kie:width>
+            <kie:width>100</kie:width>
+            <kie:width>100</kie:width>
+            <kie:width>100</kie:width>
+            <kie:width>150</kie:width>
+            <kie:width>200</kie:width>
+          </kie:ComponentWidths>
+        </kie:ComponentsWidthsExtension>
+      </di:extension>
+      <dmndi:DMNShape id="_shape_beslissing" dmnElementRef="_toegangsbeslissing">
+        <dc:Bounds x="340" y="60" width="200" height="60" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="_shape_attractie" dmnElementRef="_attractie">
+        <dc:Bounds x="60" y="220" width="160" height="50" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="_shape_leeftijd" dmnElementRef="_leeftijd">
+        <dc:Bounds x="260" y="220" width="160" height="50" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="_shape_lengte" dmnElementRef="_lengte">
+        <dc:Bounds x="460" y="220" width="160" height="50" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="_shape_begeleiding" dmnElementRef="_begeleiding">
+        <dc:Bounds x="660" y="220" width="160" height="50" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="_721E89B3-F730-4931-9425-002075DA65EA" dmnElementRef="_3F8E2CF8-F7BB-4B9C-830E-9FADE4928AFD" isCollapsed="false" isListedInputData="false">
+        <dc:Bounds x="660" y="60" width="160" height="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="_edge_ir0" dmnElementRef="_ir0">
+        <di:waypoint xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" x="140" y="220" />
+        <di:waypoint xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" x="400" y="120" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="_edge_ir1" dmnElementRef="_ir1">
+        <di:waypoint xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" x="340" y="220" />
+        <di:waypoint xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" x="420" y="120" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="_edge_ir2" dmnElementRef="_ir2">
+        <di:waypoint xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" x="540" y="220" />
+        <di:waypoint xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" x="460" y="120" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="_edge_ir3" dmnElementRef="_ir3">
+        <di:waypoint xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" x="740" y="220" />
+        <di:waypoint xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" x="480" y="120" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="_B9690632-D328-4B8D-827A-E959530753BB" dmnElementRef="_A381CF37-266D-41EE-A8E4-0ADF29EEBC38" sourceElement="_721E89B3-F730-4931-9425-002075DA65EA" targetElement="_shape_beslissing">
+        <di:waypoint x="740" y="100" />
+        <di:waypoint x="540" y="90" />
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>
